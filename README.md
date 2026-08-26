@@ -1,85 +1,204 @@
+<!--
+<table>
+  <tr>
+    <th colspan="1">RGB-D Visual Odometry (VO) Setup</th>
+    <th colspan="1">LiDAR–Inertial Odometry (LIO) Setup</th>
+  </tr>
+  <tr>
+    <td><img width="600" alt="VO Setup 1" src="https://github.com/user-attachments/assets/c06bb840-6a56-42ca-8dbe-0fac94f51f6c" /></td>
+    <!-- <td><img width="300" alt="VO Setup 2" src="https://github.com/user-attachments/assets/eb1fb727-8c16-4a09-9109-b5b66fadec56" /></td> -->
+    <td><img width="600" alt="LIO Setup 1" src="https://github.com/user-attachments/assets/eb2de49b-1fc1-4af1-84fc-6a2b2643e2d8" /></td>
+   <!-- <td><img width="300" alt="LIO Setup 2" src="https://github.com/user-attachments/assets/37810619-905d-4d35-a2b7-1f96a9115ec8" /></td> -->
+<!--  </tr>
+</table>
 
+<img width="400" height="400" alt="lio1_gif4" src="https://github.com/user-attachments/assets/3dcd0194-49f0-4ade-991f-e6dfda023098" />
 
-https://github.com/user-attachments/assets/af495c0a-7ccb-462e-bc85-170269777214
+<img width="900" height="362" alt="outdoor_map" src="https://github.com/user-attachments/assets/aa9b1b53-225e-434d-acb7-33786b49a3f1" />
 
-# GNSS_Denied_Quadcopter_Navigation
+<img width="1150" height="354" alt="outdoor_map2" src="https://github.com/user-attachments/assets/b8f0c1a0-3e87-4714-9ace-ba185fd7a1a9" />
 
-change video name
+<video
+  src="https://github.com/user-attachments/assets/af495c0a-7ccb-462e-bc85-170269777214"
+  width="5%"
+  controls>
+</video>
 
-https://github.com/user-attachments/assets/e615a37a-06e0-4dc8-9170-f577e0f83028
-
+<video
+  src="https://github.com/user-attachments/assets/e615a37a-06e0-4dc8-9170-f577e0f83028"
+  width="5%"
+  controls>
+</video> -->
 # GNSS-Denied Quadcopter Navigation
 
-A GNSS-denied navigation system for a quadcopter using two independent onboard perception approaches:
+A GNSS-denied navigation system for a quadcopter using two independent onboard localization approaches, **RGB-D Visual Odometry (VO)** and **LiDAR–Inertial Odometry (LIO)**.
 
-- **RGB-D Visual Odometry (VO) + RTAB-Map**
-- **LiDAR–Inertial Odometry (LIO) using Point-LIO**
-
-Both approaches run on an **NVIDIA Jetson Orin Nano** companion computer and provide external odometry to a **PX4** flight controller.
+<table>
+  <tr>
+    <td align="center">
+      <img width="400" alt="Visual Odometry Setup" src="https://github.com/user-attachments/assets/c06bb840-6a56-42ca-8dbe-0fac94f51f6c" />
+    </td>
+    <td align="center">
+      <img width="400" alt="LiDAR–Inertial Odometry Setup" src="https://github.com/user-attachments/assets/eb2de49b-1fc1-4af1-84fc-6a2b2643e2d8" />
+    </td>
+  </tr>
+  <tr>
+    <th>Visual Odometry Setup</th>
+    <th>LiDAR–Inertial Odometry Setup</th>
+  </tr>
+</table>
 
 ---
 
-## System Overview
+## Overview
+
+GNSS is widely used for UAV localization, but its availability and reliability can be compromised in GNSS-denied environments, including areas affected by **GNSS jamming or spoofing**, as well as indoor and obstructed environments. This project explores onboard perception as an alternative source of localization for a quadcopter.
+
+Two independent localization pipelines were implemented on the same platform:
+
+| Pipeline | Sensor | Processing |
+|---|---|---|
+| **RGB-D VO** | Intel RealSense D455F | RTAB-Map RGB-D Odometry + SLAM |
+| **LIO** | Unitree L2 3D LiDAR + IMU | Point-LIO |
+
+Both pipelines run on an **NVIDIA Jetson Orin Nano** companion computer running **ROS 2 Jazzy** and provide external odometry to the **Cube Orange+** flight controller running **PX4** through the **uXRCE-DDS** bridge over a serial connection.
+
+<img width="400" height="400" alt="GNSS Denied Indoor Position Hold" src="https://github.com/user-attachments/assets/3dcd0194-49f0-4ade-991f-e6dfda023098" />
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Demo](#demo)
+  - [RGB-D Visual Odometry](#rgb-d-visual-odometry)
+  - [LiDAR–Inertial Odometry](#lidar-inertial-odometry)
+  - [3D LiDAR Mapping](#3d-lidar-mapping)
+- [Platform & Software](#platform--software)
+- [System Architecture](#system-architecture)
+- [Technical Approaches](#technical-approaches)
+  - [RGB-D Visual Odometry (VO)](#rgb-d-visual-odometry-vo)
+  - [LiDAR–Inertial Odometry (LIO)](#lidar-inertial-odometry-lio)
+- [PX4 Integration](#px4-integration)
+- [Repository Structure](#repository-structure)
+- [Limitations & Future Work](#limitations--future-work)
+
+---
+
+# Demo
+
+## RGB-D Visual Odometry
+
+<video
+  src="https://github.com/user-attachments/assets/e615a37a-06e0-4dc8-9170-f577e0f83028"
+  width="640"
+  controls>
+</video>
+
+## LiDAR–Inertial Odometry
+
+<video
+  src="https://github.com/user-attachments/assets/af495c0a-7ccb-462e-bc85-170269777214"
+  width="640"
+  controls>
+</video>
+
+<img width="400" height="400" alt="lio1_gif4" src="https://github.com/user-attachments/assets/3dcd0194-49f0-4ade-991f-e6dfda023098" />
+
+## 3D LiDAR Mapping
+
+<img width="900" alt="outdoor_map" src="https://github.com/user-attachments/assets/aa9b1b53-225e-434d-acb7-33786b49a3f1" />
+
+<img width="1150" alt="outdoor_map2" src="https://github.com/user-attachments/assets/b8f0c1a0-3e87-4714-9ace-ba185fd7a1a9" />
+
+---
+
+# Platform & Software
+
+The two approaches use the same quadcopter platform and companion computer, with different perception sensors and localization software.
+
+<table>
+  <tr>
+    <th colspan="1">RGB-D Visual Odometry (VO)</th>
+    <th colspan="1">LiDAR–Inertial Odometry (LIO)</th>
+  </tr>
+  <tr>
+    <td><img width="400" alt="VO Setup 1" src="https://github.com/user-attachments/assets/c06bb840-6a56-42ca-8dbe-0fac94f51f6c" /></td>
+    <td><img width="400" alt="LIO Setup 1" src="https://github.com/user-attachments/assets/eb2de49b-1fc1-4af1-84fc-6a2b2643e2d8" /></td>
+  </tr>
+  <tr>
+    <td colspan="1">
+
+**Hardware**
+- Intel RealSense D455F
+- NVIDIA Jetson Orin Nano
+- Cube Orange+
+- Holybro X500 V2
+- PX4
+
+**Software**
+- ROS 2 Jazzy
+- RTAB-Map
+- uXRCE-DDS
+
+    </td>
+    <td colspan="2">
+
+**Hardware**
+- Unitree L2 3D LiDAR
+- NVIDIA Jetson Orin Nano
+- Cube Orange+
+- Holybro X500 V2
+- PX4
+
+**Software**
+- ROS 2 Jazzy
+- Point-LIO
+- uXRCE-DDS
+
+    </td>
+  </tr>
+</table>
+
+---
+
+# System Architecture
 
 ```text
-                         GNSS-DENIED NAVIGATION
+                         GNSS-DENIED QUADCOPTER
                                   │
-                  ┌───────────────┴───────────────┐
-                  │                               │
-             RGB-D VO +                      LiDAR + IMU
-             RTAB-Map                        Point-LIO
-                  │                               │
-                  └───────────────┬───────────────┘
-                                  │
-                           Jetson Orin Nano
-                              ROS 2 Jazzy
+                    ┌─────────────┴─────────────┐
+                    │                           │
+                 D455F                     Unitree L2
+              RGB + Depth                    + IMU
+                    │                           │
+                    ▼                           ▼
+             RGB-D VO +                    Point-LIO
+              RTAB-Map                        LIO
+                    │                           │
+                    └─────────────┬─────────────┘
+                                  ▼
+                         Jetson Orin Nano
+                            ROS 2 Jazzy
                                   │
                              uXRCE-DDS
                                   │
                                   ▼
-                           Cube Orange+ / PX4
+                         Cube Orange+ / PX4
                                   │
                                   ▼
                               Quadcopter
 ```
 
-The two approaches are evaluated **independently** as alternative solutions for localization and navigation without GNSS.
+The VO and LIO pipelines are **independent alternatives**; they are not fused together in the current implementation.
 
 ---
 
-## Hardware
+# Technical Approaches
 
-| Component | Hardware |
-|---|---|
-| Airframe | Holybro X500 V2 |
-| Flight Controller | Cube Orange+ |
-| Autopilot | PX4 |
-| Companion Computer | NVIDIA Jetson Orin Nano |
-| VO Sensor | Intel RealSense D455F |
-| LIO Sensor | Unitree L2 3D LiDAR |
-| Motors | *To be added* |
-| ESCs | *To be added* |
+## RGB-D Visual Odometry (VO)
 
----
-
-## Software
-
-- Ubuntu / NVIDIA JetPack on Jetson Orin Nano
-- ROS 2 Jazzy
-- PX4 Autopilot
-- RTAB-Map
-- Point-LIO
-- uXRCE-DDS
-
----
-
-# 1. RGB-D Visual Odometry + RTAB-Map
-
-The first approach uses an **Intel RealSense D455F** to provide RGB and depth data.
-
-RTAB-Map is used for RGB-D visual odometry and SLAM. The estimated odometry is provided to PX4 as external visual odometry.
-
-### Pipeline
+An **Intel RealSense D455F** provides RGB and depth measurements to RTAB-Map.
 
 ```text
 D455F
@@ -93,10 +212,9 @@ D455F
        │
        ├── Visual Odometry
        │
-       └── RTAB-Map SLAM
-             │
-             ├── Loop Closure
-             └── Pose Graph Optimization
+       └── SLAM
+            ├── Loop Closure
+            └── Pose Graph Optimization
        │
        ▼
  External Odometry
@@ -105,7 +223,22 @@ D455F
       PX4
 ```
 
-### Camera Topics
+### Configuration
+
+The main RTAB-Map configuration used for real-time testing includes:
+
+```text
+Max Features       : 150
+Minimum Inliers    : 20
+Feature Type       : 6
+Odometry Strategy  : 0
+F2M Maximum Size   : 500
+NNDR               : 0.8
+```
+
+Bundle adjustment was disabled in the real-time configuration to reduce computational load.
+
+### ROS 2 Inputs
 
 ```text
 RGB:
@@ -121,36 +254,17 @@ Frame:
  camera_link
 ```
 
-### RTAB-Map Configuration
-
-The main visual-odometry configuration used during testing includes:
-
-```text
-Max Features       : 150
-Minimum Inliers    : 20
-Feature Type       : 6
-Odometry Strategy  : 0
-F2M Maximum Size   : 500
-NNDR               : 0.8
-```
-
-Bundle adjustment was disabled in the real-time odometry configuration to reduce computational load.
-
 ### D455F IMU
 
-The D455F's onboard IMU was not used in this implementation due to a **JetPack/kernel compatibility issue on the Jetson**.
+The D455F onboard IMU is **not used** in this implementation due to a JetPack/kernel compatibility issue on the Jetson.
 
-Therefore, this branch is referred to as **RGB-D Visual Odometry (VO)** rather than Visual-Inertial Odometry (VIO).
+Therefore, this pipeline is referred to as **RGB-D Visual Odometry (VO)** rather than Visual-Inertial Odometry (VIO).
 
 ---
 
-# 2. LiDAR–Inertial Odometry — Point-LIO
+## LiDAR–Inertial Odometry (LIO)
 
-The second approach uses a **Unitree L2 3D LiDAR** together with its inertial measurements.
-
-Point-LIO performs LiDAR–inertial state estimation and generates a real-time 3D point-cloud map.
-
-### Pipeline
+The second approach uses a **Unitree L2 3D LiDAR** and its inertial measurements with Point-LIO.
 
 ```text
 Unitree L2
@@ -161,7 +275,7 @@ Unitree L2
        ▼
     Point-LIO
        │
-       ├── LiDAR-Inertial Odometry
+       ├── LiDAR–Inertial Odometry
        └── 3D Point Cloud Map
        │
        ▼
@@ -171,18 +285,20 @@ Unitree L2
       PX4
 ```
 
-LIO provides geometric localization without relying on image features or GNSS.
+Point-LIO provides real-time LiDAR–inertial state estimation while accumulating a 3D point-cloud map of the environment.
+
+Unlike the RGB-D pipeline, LIO does not depend on image features and directly exploits LiDAR geometry together with inertial measurements.
 
 ---
 
-# 3. PX4 Integration
+# PX4 Integration
 
-Both navigation pipelines run on the Jetson Orin Nano and communicate with the **Cube Orange+ running PX4** through **uXRCE-DDS**.
+Both localization pipelines run on the Jetson Orin Nano and communicate with the **Cube Orange+ running PX4** through **uXRCE-DDS**.
 
 ```text
 Jetson Orin Nano
        │
-     ROS 2
+   ROS 2 Jazzy
        │
    uXRCE-DDS
        │
@@ -190,89 +306,16 @@ Jetson Orin Nano
    Cube Orange+
        │
       PX4
+       │
+       ▼
+ External Odometry
 ```
 
-The estimated external odometry is published to the PX4 ROS 2 interface and consumed by the PX4 estimator for navigation.
-
-> Verify the exact `/fmu/in/...` topic used by your current PX4 configuration before deployment, as the topic depends on the PX4 ROS 2 interface/version.
+The estimated odometry from either VO or LIO is provided to the PX4 ROS 2 interface as external vehicle odometry and used by the PX4 estimator for navigation without GNSS position measurements.
 
 ---
 
-# 4. GNSS-Denied Navigation
-
-The system is designed to operate without GNSS position measurements.
-
-The navigation estimate is instead generated from onboard perception:
-
-```text
-       GNSS DENIED
-            │
-     ┌──────┴──────┐
-     │             │
-    RGB-D        LiDAR + IMU
-     │             │
-   RTAB-Map      Point-LIO
-     │             │
-     ▼             ▼
-   VO Pose       LIO Pose
-     │             │
-     └──────┬──────┘
-            ▼
-           PX4
-```
-
-This allows the same quadcopter platform to be evaluated using two different sensor-based localization approaches.
-
----
-
-# 5. Demonstration
-
-The project includes separate demonstrations for both approaches.
-
-### RGB-D VO + RTAB-Map
-
-Demonstrates:
-
-- GNSS-denied operation
-- Real-time RGB-D visual odometry
-- RTAB-Map SLAM
-- Loop-closure-based map optimization
-- Estimated trajectory
-- Reconstructed environment
-
-### Point-LIO
-
-Demonstrates:
-
-- GNSS-denied operation
-- Real-time LiDAR–inertial odometry
-- Estimated trajectory
-- 3D point-cloud reconstruction
-- External odometry integration with PX4
-
-Demo videos are available in [`media/`](media/).
-
----
-
-# 6. VO vs LIO
-
-| | RGB-D VO + RTAB-Map | Point-LIO |
-|---|---|---|
-| Primary sensor | D455F RGB-D | Unitree L2 3D LiDAR |
-| IMU | Not used | Used |
-| GNSS | Not required | Not required |
-| Odometry | RGB-D visual | LiDAR–inertial |
-| Mapping | RGB-D / RTAB-Map | 3D point cloud |
-| Loop closure | RTAB-Map | Point-LIO odometry/map |
-| Main dependency | Visual features + depth | LiDAR geometry + IMU |
-| Lighting sensitivity | Higher | Lower |
-| 3D geometric information | Depth-based | Direct LiDAR |
-
-The approaches provide different trade-offs rather than one being universally superior.
-
----
-
-# 7. Repository Structure
+# Repository Structure
 
 ```text
 gnss-denied-quadcopter-navigation/
@@ -299,33 +342,18 @@ gnss-denied-quadcopter-navigation/
 
 ---
 
-# 8. Limitations
+# Limitations & Future Work
 
-- D455F IMU integration was not used due to the JetPack/kernel compatibility issue.
+- The D455F IMU is currently not used due to the JetPack/kernel compatibility issue.
 - RGB-D VO depends on sufficient visual features and reliable depth measurements.
-- LIO requires greater computational resources and depends on LiDAR–IMU calibration and synchronization.
+- LIO depends on LiDAR–IMU calibration, synchronization, and sufficient computational resources.
 - Without GNSS, the system does not provide an absolute global position reference.
-- Final navigation accuracy depends on sensor calibration, environment, estimator configuration, and flight dynamics.
+- Quantitative comparison against ground truth has not yet been performed.
 
----
+### Future Work
 
-# 9. Future Work
-
-- Resolve D455F IMU compatibility and evaluate true RGB-D VIO.
-- Quantitatively compare VO and LIO against ground truth.
-- Investigate visual–LiDAR fusion for improved robustness.
-- Optimize both pipelines for real-time Jetson deployment.
-- Evaluate performance across different lighting and environmental conditions.
-- Improve autonomous waypoint navigation using external odometry.
-
----
-
-## Acknowledgements
-
-This project uses:
-
-- [ROS 2](https://docs.ros.org/)
-- [PX4 Autopilot](https://px4.io/)
-- [RTAB-Map](https://introlab.github.io/rtabmap/)
-- [Point-LIO](https://github.com/hku-mars/Point-LIO)
-- [Intel RealSense ROS](https://github.com/IntelRealSense/realsense-ros)
+- Resolve D455F IMU compatibility and evaluate RGB-D VIO.
+- Quantitatively evaluate VO and LIO against ground truth.
+- Investigate visual–LiDAR fusion.
+- Further optimize both pipelines for Jetson deployment.
+- Evaluate autonomous waypoint navigation using external odometry.
