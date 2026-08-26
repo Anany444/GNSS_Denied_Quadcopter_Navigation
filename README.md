@@ -64,8 +64,7 @@ Two independent localization pipelines were implemented on the same platform:
 Both pipelines run on an **NVIDIA Jetson Orin Nano** companion computer running **ROS 2 Jazzy** and provide external odometry to the **Cube Orange+** flight controller running **PX4** through the **uXRCE-DDS** bridge over a serial connection.
 
 ### GNSS Denied Indoor Position Hold
-
-<video
+> ▶️ **Click play to start the demo.** <video
   src="https://github.com/user-attachments/assets/72488990-236b-4f18-a3b2-daf8a11ab9ca"
   width="140"
   controls>
@@ -97,7 +96,7 @@ Both pipelines run on an **NVIDIA Jetson Orin Nano** companion computer running 
 ## Demo
 
 ### RGB-D Visual Odometry
-> ▶️ **Click play to start the demo.**<video
+> ▶️ **Click play to start the demo.** <video
   src="https://github.com/user-attachments/assets/e615a37a-06e0-4dc8-9170-f577e0f83028"
   width="640"
   controls>
