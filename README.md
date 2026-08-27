@@ -56,7 +56,25 @@ A GNSS-denied navigation system for a quadcopter using two independent onboard l
 </table>
 
 ---
+## 📑 Table of Contents
 
+- [Overview](#-overview)
+- [Demo](#-demo)
+  - [RGB-D Visual Odometry](#-rgb-d-visual-odometry)
+  - [LiDAR–Inertial Odometry](#-lidar-inertial-odometry)
+  - [3D LiDAR Mapping](# -3d-lidar-mapping)
+- [Platform & Software](#-platform--software)
+- [System Architecture](#-system-architecture)
+- [Localization Approaches](#-localization-approaches)
+  - [RGB-D Visual Odometry (VO)](#-rgb-d-visual-odometry-vo)
+  - [LiDAR–Inertial Odometry (LIO)](#-lidar-inertial-odometry-lio)
+- [PX4 Integration](#-px4-integration)
+- [Repository Structure](#-repository-structure)
+- [Usage](#-usage)
+- [Future Work](#-future-work)
+
+---
+  
 ## 📖 Overview
 
 GNSS is widely used for UAV localization, but its availability and reliability can be compromised in GNSS-denied environments, including areas affected by **GNSS jamming or spoofing**, as well as indoor and obstructed environments. This project explores onboard perception as an alternative source of localization for a quadcopter.
@@ -81,24 +99,8 @@ Both pipelines run on an **NVIDIA Jetson Orin Nano** companion computer running 
 
 <!-- <img width="400" height="400" alt="GNSS Denied Indoor Position Hold" src="https://github.com/user-attachments/assets/3dcd0194-49f0-4ade-991f-e6dfda023098" /> -->
 
----
 
-## 📑 Table of Contents
 
-- [Overview](#-overview)
-- [Demo](#-demo)
-  - [RGB-D Visual Odometry](#-rgb-d-visual-odometry)
-  - [LiDAR–Inertial Odometry](#-lidar-inertial-odometry)
-  - [3D LiDAR Mapping](# -3d-lidar-mapping)
-- [Platform & Software](#-platform--software)
-- [System Architecture](#-system-architecture)
-- [Localization Approaches](#-localization-approaches)
-  - [RGB-D Visual Odometry (VO)](#-rgb-d-visual-odometry-vo)
-  - [LiDAR–Inertial Odometry (LIO)](#-lidar-inertial-odometry-lio)
-- [PX4 Integration](#-px4-integration)
-- [Repository Structure](#-repository-structure)
-- [Usage](#-usage)
-- [Future Work](#-future-work)
 ---
 
 ## 🎬 Demo
