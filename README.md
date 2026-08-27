@@ -89,7 +89,7 @@ Both pipelines run on an **NVIDIA Jetson Orin Nano** companion computer running 
 - [Demo](#-demo)
   - [RGB-D Visual Odometry](#-rgb-d-visual-odometry)
   - [LiDAR–Inertial Odometry](#-lidar-inertial-odometry)
-  - [3D LiDAR Mapping](#-3d-lidar-mapping)
+  - [3D LiDAR Mapping](# -3d-lidar-mapping)
 - [Platform & Software](#-platform--software)
 - [System Architecture](#-system-architecture)
 - [Localization Approaches](#-localization-approaches)
