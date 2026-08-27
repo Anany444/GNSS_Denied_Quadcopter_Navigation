@@ -133,7 +133,7 @@ Both pipelines run on an **NVIDIA Jetson Orin Nano** companion computer running 
 
 ---
 
-## 🖥️ Platform & Software
+## 🖥 Platform & Software
 
 The two approaches use the same quadcopter platform and companion computer, with different perception sensors and localization software.
 
@@ -181,7 +181,7 @@ The two approaches use the same quadcopter platform and companion computer, with
 
 ---
 
-## 🏗️ System Architecture
+## 🏗 System Architecture
 
 The two pipelines share the same flight controller integration but use different sensors and odometry algorithms. They are **independent alternatives** — not fused together.
 
@@ -337,7 +337,7 @@ Odometry estimated by either VO (`vo_bridge`) or LIO (`lio_bridge`) is published
 
 Both bridge nodes perform the necessary **ENU (ROS) → NED (PX4)** coordinate frame conversion and `nav_msgs/Odometry` → `px4_msgs/VehicleOdometry` message conversion before publishing.
 
-### ⚙️ PX4 EKF2 Parameter Setup
+### ⚙ PX4 EKF2 Parameter Setup
 
 To enable GNSS-denied navigation using external odometry, the following EKF2 parameters must be configured on the flight controller:
 
