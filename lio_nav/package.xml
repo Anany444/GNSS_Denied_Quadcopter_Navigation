@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>lio_nav</name>
+  <version>0.1.0</version>
+  <description>
+    LiDAR-Inertial Odometry pipeline for GNSS-denied quadcopter navigation.
+    Drives the full LIO stack: Unitree L2 LiDAR + IMU fed into Point-LIO for
+    odometry and 3D mapping, and a bridge node that converts /odom_corrected
+    to PX4 VehicleOdometry via uXRCE-DDS with initial pose zeroing and
+    NED frame passthrough.
+  </description>
+  <maintainer email="robot@drone.dev">robot</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>px4_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>diagnostic_msgs</exec_depend>
+  <exec_depend>point_lio</exec_depend>
+  <exec_depend>unitree_lidar_ros2</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
