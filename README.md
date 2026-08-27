@@ -62,7 +62,7 @@ A GNSS-denied navigation system for a quadcopter using two independent onboard l
 - [Demo](#-demo)
   - [RGB-D Visual Odometry](#-rgb-d-visual-odometry)
   - [LiDAR–Inertial Odometry](#-lidar-inertial-odometry)
-  - [3D LiDAR Mapping](# -3d-lidar-mapping)
+  - [3D LiDAR Mapping](%EF%B8%8F-3d-lidar-mapping)
 - [Platform & Software](#-platform--software)
 - [System Architecture](#-system-architecture)
 - [Localization Approaches](#-localization-approaches)
