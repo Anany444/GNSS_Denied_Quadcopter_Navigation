@@ -70,16 +70,13 @@ Two independent localization pipelines were implemented on the same platform:
 
 Both pipelines run on an **NVIDIA Jetson Orin Nano** companion computer running **ROS 2 Jazzy** and provide external odometry to the **Cube Orange+** flight controller running **PX4** through the **uXRCE-DDS** bridge over a serial connection.
 
-### 🏠 GNSS Denied Indoor Position Hold
-> ▶️ **Click play to start the demo.** <video
-  src="https://github.com/user-attachments/assets/72488990-236b-4f18-a3b2-daf8a11ab9ca"
-  width="140"
-  autoplay
-  loop
-  muted
-  playsinline
-  controls>
-</video>
+### 🏠 GNSS-denied indoor position hold
+>⏳ **Please wait a few seconds for the GIF to load/render**
+
+<p align="left">
+  <img width="500" alt="GNSS Denied Indoor Position Hold" src="https://github.com/user-attachments/assets/3dcd0194-49f0-4ade-991f-e6dfda023098" />
+  <br><em> </em>
+</p>
 
 
 <!-- <img width="400" height="400" alt="GNSS Denied Indoor Position Hold" src="https://github.com/user-attachments/assets/3dcd0194-49f0-4ade-991f-e6dfda023098" /> -->
@@ -122,16 +119,16 @@ Both pipelines run on an **NVIDIA Jetson Orin Nano** companion computer running 
 
 ### 🗺️ 3D LiDAR Mapping
 
-> ⏳ **Please wait a few seconds for the GIF to load/render, then ▶️ click play to start the demo.**
+> ⏳ **Please wait a few seconds for the GIF to load/render**
 
 <p align="center">
   <img width="900" alt="Outdoor 3D point cloud map — Location 1" src="https://github.com/user-attachments/assets/aa9b1b53-225e-434d-acb7-33786b49a3f1" />
-  <br><em>Outdoor 3D point cloud map — Location 1</em>
+  <br><em>Outdoor 3D point cloud map with path followed by drone in purple — Location 1</em>
 </p>
 
 <p align="center">
   <img width="1150" alt="Outdoor 3D point cloud map — Location 2" src="https://github.com/user-attachments/assets/b8f0c1a0-3e87-4714-9ace-ba185fd7a1a9" />
-  <br><em>Outdoor 3D point cloud map — Location 2</em>
+  <br><em>Outdoor 3D point cloud map with path followed by drone in purple — Location 2</em>
 </p>
 
 ---
@@ -157,13 +154,13 @@ The two approaches use the same quadcopter platform and companion computer, with
 - NVIDIA Jetson Orin Nano
 - Cube Orange+
 - Holybro X500 V2
-- PX4
+
 
 **Software**
 - ROS 2 Jazzy
 - RTAB-Map
 - uXRCE-DDS
-
+- PX4 Autopilot 
     </td>
     <td colspan="2">
 
@@ -172,13 +169,12 @@ The two approaches use the same quadcopter platform and companion computer, with
 - NVIDIA Jetson Orin Nano
 - Cube Orange+
 - Holybro X500 V2
-- PX4
 
 **Software**
 - ROS 2 Jazzy
 - Point-LIO
 - uXRCE-DDS
-
+- PX4 Autopilot
     </td>
   </tr>
 </table>
@@ -187,33 +183,66 @@ The two approaches use the same quadcopter platform and companion computer, with
 
 ## 🏗️ System Architecture
 
-```text
-                         GNSS-DENIED QUADCOPTER
-                                  │
-                    ┌─────────────┴─────────────┐
-                    │                           │
-                 D455F                     Unitree L2
-              RGB + Depth                    + IMU
-                    │                           │
-                    ▼                           ▼
-             RGB-D VO +                    Point-LIO
-              RTAB-Map                        LIO
-                    │                           │
-                    └─────────────┬─────────────┘
-                                  ▼
-                         Jetson Orin Nano
-                            ROS 2 Jazzy
-                                  │
-                             uXRCE-DDS
-                                  │
-                                  ▼
-                         Cube Orange+ / PX4
-                                  │
-                                  ▼
-                              Quadcopter
-```
+The two pipelines share the same flight controller integration but use different sensors and odometry algorithms. They are **independent alternatives** — not fused together.
 
-The VO and LIO pipelines are **independent alternatives**; they are not fused together in the current implementation.
+<img width="1672" height="941" alt="image" src="https://github.com/user-attachments/assets/4053be98-fe3b-4b2c-86cd-6e9093e4c3e0" />
+<!--
+```text
+╔══════════════════════════════════════╗   ╔══════════════════════════════════════╗
+║         VISION PIPELINE (VO)         ║   ║          LiDAR PIPELINE (LIO)        ║
+╠══════════════════════════════════════╣   ╠══════════════════════════════════════╣
+║                                      ║   ║                                      ║
+║   ┌─────────────────────────────┐    ║   ║   ┌─────────────────────────────┐    ║
+║   │     Intel RealSense D455F   │    ║   ║   │       Unitree L2 LiDAR      │    ║
+║   │  RGB stream + Depth stream  │    ║   ║   │   3D Point Cloud  +  IMU    │    ║
+║   └────────────┬────────────────┘    ║   ║   └────────────┬────────────────┘    ║
+║                │  USB 3.0            ║   ║                │  Ethernet           ║
+║                ▼                     ║   ║                ▼                     ║
+║   ┌─────────────────────────────┐    ║   ║   ┌─────────────────────────────┐    ║
+║   │     Jetson Orin Nano        │    ║   ║   │     Jetson Orin Nano        │    ║
+║   │       ROS 2 Jazzy           │    ║   ║   │       ROS 2 Jazzy           │    ║
+║   │                             │    ║   ║   │                             │    ║
+║   │  ┌───────────────────────┐  │    ║   ║   │  ┌───────────────────────┐  │    ║
+║   │  │      RTAB-Map         │  │    ║   ║   │  │       Point-LIO       │  │    ║
+║   │  │  RGB-D VO + SLAM      │  │    ║   ║   │  │  LiDAR–Inertial Odom  │  │    ║
+║   │  └──────────┬────────────┘  │    ║   ║   │  └──────────┬────────────┘  │    ║
+║   │             │ /rtabmap/odom │    ║   ║   │             │ /odom_correc- │    ║
+║   │             │  (ENU / ROS)  │    ║   ║   │             │  ted (ENU/ROS)│    ║
+║   │             ▼               │    ║   ║   │             ▼               │    ║
+║   │  ┌───────────────────────┐  │    ║   ║   │  ┌───────────────────────┐  │    ║
+║   │  │    vision_bridge      │  │    ║   ║   │  │    lidar_bridge       │  │    ║
+║   │  │  • ENU→NED frame conv │  │    ║   ║   │  │  • ENU→NED frame conv │  │    ║
+║   │  │  • nav_msgs/Odometry  │  │    ║   ║   │  │  • nav_msgs/Odometry  │  │    ║
+║   │  │    → px4_msgs/        │  │    ║   ║   │  │    → px4_msgs/        │  │    ║
+║   │  │    VehicleOdometry    │  │    ║   ║   │  │    VehicleOdometry    │  │    ║
+║   │  └──────────┬────────────┘  │    ║   ║   │  └──────────┬────────────┘  │    ║
+║   │             │ /fmu/in/      │    ║   ║   │             │ /fmu/in/      │    ║
+║   │             │ vehicle_      │    ║   ║   │             │ vehicle_      │    ║
+║   │             │ visual_odom   │    ║   ║   │             │ visual_odom   │    ║
+║   │             ▼               │    ║   ║   │             ▼               │    ║
+║   │  ┌───────────────────────┐  │    ║   ║   │  ┌───────────────────────┐  │    ║
+║   │  │   uXRCE-DDS Agent     │  │    ║   ║   │  │   uXRCE-DDS Agent     │  │    ║
+║   │  │  (MicroXRCEAgent)     │  │    ║   ║   │  │  (MicroXRCEAgent)     │  │    ║
+║   │  └──────────┬────────────┘  │    ║   ║   │  └──────────┬────────────┘  │    ║
+║   └─────────────│───────────────┘    ║   ║   └─────────────│───────────────┘    ║
+║                 │  Serial UART       ║   ║                 │  Serial UART       ║
+║                 │  921600 baud       ║   ║                 │  921600 baud       ║
+╚═════════════════│════════════════════╝   ╚═════════════════│════════════════════╝
+                  │                                           │
+                  └─────────────────┬─────────────────────────┘
+                                    ▼
+                  ┌─────────────────────────────────────────┐
+                  │           Cube Orange+  /  PX4           │
+                  │                                          │
+                  │   uXRCE-DDS Client  ──▶  uORB bus        │
+                  │                              │           │
+                  │                             EKF2         │
+                  │                    (sensor fusion /      │
+                  │                    GNSS-denied nav)      │
+                  └──────────────────────────────────────────┘
+```
+-->
+
 
 ---
 
@@ -246,44 +275,6 @@ D455F
       PX4
 ```
 
-#### ⚙️ Configuration
-
-The main RTAB-Map configuration used for real-time testing includes:
-
-```text
-Max Features       : 150
-Minimum Inliers    : 20
-Feature Type       : 6
-Odometry Strategy  : 0
-F2M Maximum Size   : 500
-NNDR               : 0.8
-```
-
-Bundle adjustment was disabled in the real-time configuration to reduce computational load.
-
-#### 🔌 ROS 2 Inputs
-
-```text
-RGB:
- /camera/camera/color/image_raw
-
-Depth:
- /camera/camera/aligned_depth_to_color/image_raw
-
-Camera Info:
- /camera/camera/color/camera_info
-
-Frame:
- camera_link
-```
-
-#### 🔧 D455F IMU
-
-The D455F onboard IMU is **not used** in this implementation due to a JetPack/kernel compatibility issue on the Jetson.
-
-Therefore, this pipeline is referred to as **RGB-D Visual Odometry (VO)** rather than Visual-Inertial Odometry (VIO).
-
----
 
 ### 📡 LiDAR Inertial Odometry (LIO)
 
@@ -308,33 +299,59 @@ Unitree L2
       PX4
 ```
 
-Point-LIO provides real-time LiDAR–inertial state estimation while accumulating a 3D point-cloud map of the environment.
-
-Unlike the RGB-D pipeline, LIO does not depend on image features and directly exploits LiDAR geometry together with inertial measurements.
-
 ---
 
 ## 🔗 PX4 Integration
 
-Both localization pipelines run on the Jetson Orin Nano and communicate with the **Cube Orange+ running PX4** through **uXRCE-DDS**.
+Both localization pipelines run on the Jetson Orin Nano and communicate with the **Cube Orange+ running PX4** through the **uXRCE-DDS** middleware bridge over a serial connection (UART @ 921600 baud).
 
-```text
-Jetson Orin Nano
-       │
-   ROS 2 Jazzy
-       │
-   uXRCE-DDS
-       │
-       ▼
-   Cube Orange+
-       │
-      PX4
-       │
-       ▼
- External Odometry
+### 🔌 Agent / Client Architecture
+
+| Component | Runs on | Role |
+|---|---|---|
+| **uXRCE-DDS Agent** (`MicroXRCEAgent`) | Jetson — ROS 2 Jazzy | Bridges ROS 2 ↔ PX4 uORB over serial |
+| **uXRCE-DDS Client** | Cube Orange+ — PX4 firmware | Exposes uORB topics to the agent |
+
+The agent transparently exposes PX4's internal **uORB topics** as typed **ROS 2 messages** (`px4_msgs`), enabling bidirectional communication — the Jetson can publish setpoints to PX4 and subscribe to PX4 telemetry, all within the standard ROS 2 ecosystem.
+
+#### Required packages (Jetson side)
+
+```bash
+# 1. Micro XRCE-DDS Agent
+git clone https://github.com/eProsima/Micro-XRCE-DDS-Agent.git
+cd Micro-XRCE-DDS-Agent && mkdir build && cd build
+cmake .. && make && sudo make install
+
+# 2. PX4 ROS 2 message definitions
+# Clone px4_msgs into your ROS 2 workspace src/ and build
+git clone https://github.com/PX4/px4_msgs.git
+colcon build --packages-select px4_msgs
 ```
 
-The estimated odometry from either VO or LIO is provided to the PX4 ROS 2 interface as external vehicle odometry and used by the PX4 estimator for navigation without GNSS position measurements.
+### 📤 External Odometry Topic
+
+Odometry estimated by either VO (`vision_bridge`) or LIO (`lidar_bridge`) is published to:
+
+```
+/fmu/in/vehicle_visual_odometry   [px4_msgs/msg/VehicleOdometry]
+```
+
+Both bridge nodes perform the necessary **ENU (ROS) → NED (PX4)** coordinate frame conversion and `nav_msgs/Odometry` → `px4_msgs/VehicleOdometry` message conversion before publishing.
+
+### ⚙️ PX4 EKF2 Parameter Setup
+
+To enable GNSS-denied navigation using external odometry, the following EKF2 parameters must be configured on the flight controller:
+
+| Parameter | Description |
+|---|---|
+| `EKF2_EV_CTRL` | Bitmask controlling which external vision (EV) measurements the EKF2 fuses — position, velocity, yaw, and/or height |
+| `EKF2_HGT_REF` | Selects the primary altitude reference source used by EKF2 — set to EV to use odometry height instead of barometer or GPS |
+| `EKF2_EV_DELAY` | Compensates for the timestamp offset between when odometry is generated on the Jetson and when EKF2 processes it |
+| `EKF2_EV_NOISE_MD` | Controls whether EKF2 uses fixed noise values or reads the covariance directly from the incoming odometry message |
+| `EKF2_GPS_CTRL` | Bitmask enabling/disabling GPS measurement fusion in EKF2 — disable when flying GNSS-denied |
+| `EKF2_BARO_CTRL` | Enables or disables barometer fusion as a height source in EKF2 |
+
+
 
 ---
 
@@ -365,20 +382,10 @@ gnss-denied-quadcopter-navigation/
 
 ---
 
-## ⚠️ Limitations
-
-- The D455F IMU is currently not used due to the JetPack/kernel compatibility issue.
-- RGB-D VO depends on sufficient visual features and reliable depth measurements.
-- LIO depends on LiDAR–IMU calibration, synchronization, and sufficient computational resources.
-- Without GNSS, the system does not provide an absolute global position reference.
-- Quantitative comparison against ground truth has not yet been performed.
-
----
-
 ## 🔮 Future Work
 
-- Resolve D455F IMU compatibility and evaluate RGB-D VIO.
+- Resolve D455F IMU compatibility with jetpack version, and evaluate RGB-D VIO.
 - Quantitatively evaluate VO and LIO against ground truth.
 - Investigate visual–LiDAR fusion.
-- Further optimize both pipelines for Jetson deployment.
-- Evaluate autonomous waypoint navigation using external odometry.
+- Explore GPU accelerated approaches for both VIO and LIO to exploit the full potential of Jetson Orin Nano.
+- Implement frontier based autonomous exploration.
