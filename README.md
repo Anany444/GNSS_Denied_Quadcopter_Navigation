@@ -97,7 +97,7 @@ Both pipelines run on an **NVIDIA Jetson Orin Nano** companion computer running 
   - [LiDAR–Inertial Odometry (LIO)](#lidar-inertial-odometry-lio)
 - [PX4 Integration](#px4-integration)
 - [Repository Structure](#repository-structure)
-- [Limitations](#limitations)
+- [Usage](#usage)
 - [Future Work](#future-work)
 ---
 
@@ -314,23 +314,22 @@ Both localization pipelines run on the Jetson Orin Nano and communicate with the
 
 The agent transparently exposes PX4's internal **uORB topics** as typed **ROS 2 messages** (`px4_msgs`), enabling bidirectional communication — the Jetson can publish setpoints to PX4 and subscribe to PX4 telemetry, all within the standard ROS 2 ecosystem.
 
-#### Required packages (Jetson side)
+#### Required Packages (Jetson side)
+
+These packages are included in this repository as **Git submodules**:
 
 ```bash
-# 1. Micro XRCE-DDS Agent
-git clone https://github.com/eProsima/Micro-XRCE-DDS-Agent.git
+# 1. Micro XRCE-DDS Agent (included as submodule)
 cd Micro-XRCE-DDS-Agent && mkdir build && cd build
 cmake .. && make && sudo make install
 
-# 2. PX4 ROS 2 message definitions
-# Clone px4_msgs into your ROS 2 workspace src/ and build
-git clone https://github.com/PX4/px4_msgs.git
+# 2. PX4 ROS 2 message definitions (included as submodule)
 colcon build --packages-select px4_msgs
 ```
 
 ### 📤 External Odometry Topic
 
-Odometry estimated by either VO (`vision_bridge`) or LIO (`lidar_bridge`) is published to:
+Odometry estimated by either VO (`vo_bridge`) or LIO (`lio_bridge`) is published to:
 
 ```
 /fmu/in/vehicle_visual_odometry   [px4_msgs/msg/VehicleOdometry]
@@ -358,26 +357,62 @@ To enable GNSS-denied navigation using external odometry, the following EKF2 par
 ## 📂 Repository Structure
 
 ```text
-gnss-denied-quadcopter-navigation/
-│
-├── README.md
-│
-├── vo/
+GNSS_Denied_Quadcopter_Navigation/
+├── vo_nav/                        # RGB-D Visual Odometry ROS 2 package
 │   ├── launch/
-│   ├── config/
-│   └── scripts/
+│   │   ├── bringup.launch.py      # Full VO pipeline bringup
+│   │   ├── realsense.launch.py    # RealSense D455F driver launch
+│   │   └── vo_bridge.launch.py    # Standalone VO bridge launch
+│   ├── vo_nav/
+│   │   ├── vo_bridge_node.py      # RTAB-Map ENU -> PX4 NED bridge & telemetry
+│   │   └── foxglove_relay_node.py # Low-bandwidth WiFi image compressor
+│   ├── package.xml
+│   ├── setup.cfg
+│   └── setup.py
 │
-├── lio/
+├── lio_nav/                       # LiDAR-Inertial Odometry ROS 2 package
 │   ├── launch/
-│   ├── config/
-│   └── scripts/
+│   │   ├── bringup.launch.py      # Full LIO pipeline bringup
+│   │   └── lio_bridge.launch.py   # Standalone LIO bridge launch
+│   ├── lio_nav/
+│   │   └── lio_bridge_node.py     # Point-LIO initial pose zeroing & ENU -> PX4 NED frame conversion
+│   ├── package.xml
+│   ├── setup.cfg
+│   └── setup.py
 │
-├── px4/
-│   └── config/
-│
-└── media/
-    ├── images/
-    └── videos/
+├── px4_msgs/                      # [Submodule] PX4 uORB ROS 2 message definitions
+├── Micro-XRCE-DDS-Agent/          # [Submodule] uXRCE-DDS agent package
+├── point_lio_ros2/                # [Submodule] Point-LIO odometry package
+├── unilidar_sdk2/                 # [Submodule] Unitree L2 LiDAR ROS 2 SDK 
+└── README.md
+```
+
+---
+
+## 🚀 Usage
+
+### 1. Clone with Submodules
+```bash
+git clone --recursive https://github.com/Anany444/GNSS_Denied_Quadcopter_Navigation.git
+cd GNSS_Denied_Quadcopter_Navigation
+```
+
+### 2. Build the Workspace
+```bash
+colcon build --symlink-install
+source install/setup.bash
+```
+
+### 3. Run Pipeline Bringup
+
+**For RGB-D Visual Odometry (RealSense D455F + RTAB-Map):**
+```bash
+ros2 launch vo_nav bringup.launch.py
+```
+
+**For LiDAR-Inertial Odometry (Unitree L2 + Point-LIO):**
+```bash
+ros2 launch lio_nav bringup.launch.py
 ```
 
 ---
