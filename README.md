@@ -85,20 +85,20 @@ Both pipelines run on an **NVIDIA Jetson Orin Nano** companion computer running 
 
 ## 📑 Table of Contents
 
-- [Overview](#overview)
-- [Demo](#demo)
-  - [RGB-D Visual Odometry](#rgb-d-visual-odometry)
-  - [LiDAR–Inertial Odometry](#lidar-inertial-odometry)
-  - [3D LiDAR Mapping](#3d-lidar-mapping)
-- [Platform & Software](#platform--software)
-- [System Architecture](#system-architecture)
-- [Localization Approaches](#localization-approaches)
-  - [RGB-D Visual Odometry (VO)](#rgb-d-visual-odometry-vo)
-  - [LiDAR–Inertial Odometry (LIO)](#lidar-inertial-odometry-lio)
-- [PX4 Integration](#px4-integration)
-- [Repository Structure](#repository-structure)
-- [Usage](#usage)
-- [Future Work](#future-work)
+- [Overview](#-overview)
+- [Demo](#-demo)
+  - [RGB-D Visual Odometry](#-rgb-d-visual-odometry)
+  - [LiDAR–Inertial Odometry](#-lidar-inertial-odometry)
+  - [3D LiDAR Mapping](#-3d-lidar-mapping)
+- [Platform & Software](#-platform--software)
+- [System Architecture](#-system-architecture)
+- [Localization Approaches](#-localization-approaches)
+  - [RGB-D Visual Odometry (VO)](#-rgb-d-visual-odometry-vo)
+  - [LiDAR–Inertial Odometry (LIO)](#-lidar-inertial-odometry-lio)
+- [PX4 Integration](#-px4-integration)
+- [Repository Structure](#-repository-structure)
+- [Usage](#-usage)
+- [Future Work](#-future-work)
 ---
 
 ## 🎬 Demo
@@ -117,7 +117,7 @@ Both pipelines run on an **NVIDIA Jetson Orin Nano** companion computer running 
   controls>
 </video>
 
-### 🗺️ 3D LiDAR Mapping
+### 🗺 3D LiDAR Mapping
 
 > ⏳ **Please wait a few seconds for the GIF to load/render**
 
